@@ -43,7 +43,7 @@ func (s set[v]) Lookup(el v) bool {
 
 func (s set[v]) All() iter.Seq[v] {
 	return func(y func(el v) bool) {
-		for k, _ := range s.s {
+		for k := range s.s {
 			if !y(k) {
 				break
 			}

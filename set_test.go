@@ -2,10 +2,11 @@ package gg_test
 
 import (
 	"fmt"
-	"gg"
 	"reflect"
 	"slices"
 	"testing"
+
+	"gg"
 )
 
 func Exampleset_Add() {
