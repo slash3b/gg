@@ -3,9 +3,9 @@ package gg_test
 import (
 	"fmt"
 	"gg"
-    "testing"
-    "reflect"
-    "slices"
+	"reflect"
+	"slices"
+	"testing"
 )
 
 func Exampleset_Add() {
@@ -47,8 +47,12 @@ func TestUnion(t *testing.T) {
 
 	expected := []int{1, 2, 3, 4, 5}
 
-    slices.Sort(res)
-    slices.Sort(expected)
+	slices.Sort(res)
+	slices.Sort(expected)
+
+	if u.Len() != len(expected) {
+		t.Fatalf("expected %d number of elements, got %d", len(expected), len(res))
+	}
 
 	if !reflect.DeepEqual(res, expected) {
 		t.Fatalf("expected: %#v, got %#v", expected, res)
