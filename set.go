@@ -11,10 +11,16 @@ type set[v comparable] struct {
 	s map[v]struct{}
 }
 
-func NewSet[v comparable]() set[v] {
-	return set[v]{
+func NewSet[v comparable](els ...v) set[v] {
+	s := set[v]{
 		s: make(map[v]struct{}),
 	}
+
+	for _, val := range els {
+		s.Add(val)
+	}
+
+	return s
 }
 
 func (s set[v]) Add(e v) bool {
@@ -25,6 +31,12 @@ func (s set[v]) Add(e v) bool {
 	s.s[e] = struct{}{}
 
 	return true
+}
+
+func (s set[v]) Delete(els ...v) {
+	for _, val := range els {
+		delete(s.s, val)
+	}
 }
 
 func (s set[v]) Len() int {
@@ -107,6 +119,16 @@ func (s set[v]) Subset(other set[v]) bool {
 	}
 
 	return true
+}
+
+func (s set[v]) Enumerate() []v {
+	res := make([]v, 0, s.Len())
+
+	for k := range s.All() {
+		res = append(res, k)
+	}
+
+	return res
 }
 
 // fixme: marshall and unmarshall to implement

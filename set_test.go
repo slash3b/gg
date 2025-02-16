@@ -141,3 +141,27 @@ func TestSubset(t *testing.T) {
 		t.Fatalf("expected b to be a subset of a.  a:%#v, b:%#v", a, b)
 	}
 }
+
+func TestEnumerate(t *testing.T) {
+	a := gg.NewSet[int](1, 2)
+
+	expected := []int{1, 2}
+	if !reflect.DeepEqual(a.Enumerate(), expected) {
+		t.Fatalf("expected enumeration:%#v, got :%#v", a.Enumerate(), expected)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	a := gg.NewSet[int](1, 2, 3)
+
+	a.Delete(1, 3)
+
+	t.Log(a.Len())
+	t.Log(a.Lookup(2))
+
+	if a.Len() == 1 && a.Lookup(2) {
+		return
+	}
+
+	t.Fatalf("expected set to have exactly one element, instead %#v", a)
+}
