@@ -66,14 +66,14 @@ func TestIntersection(t *testing.T) {
 	a.Add(1)
 	a.Add(2)
 	a.Add(3)
-	a.Add(4)
+	a.Add(5)
 
 	b.Add(1)
-	b.Add(2)
-	b.Add(3)
+	b.Add(7)
+	b.Add(8)
 	b.Add(5)
 
-	u := a.Union(b)
+	u := a.Intersection(b)
 
 	res := make([]int, 0)
 
@@ -81,7 +81,7 @@ func TestIntersection(t *testing.T) {
 		res = append(res, v)
 	}
 
-	expected := []int{1, 2, 3, 4, 5}
+	expected := []int{1, 5}
 
 	slices.Sort(res)
 	slices.Sort(expected)
