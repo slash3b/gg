@@ -1,6 +1,9 @@
 package gg
 
 import (
+	"encoding/json"
+	"maps"
+
 	"iter"
 )
 
@@ -131,4 +134,22 @@ func (s set[v]) Enumerate() []v {
 	return res
 }
 
-// fixme: marshall and unmarshall to implement
+func (s set[v]) MarshalJSON() ([]byte, error) {
+	if s.Len() == 0 {
+		return []byte{}, nil
+	}
+
+	var res []v
+
+	for el := range maps.Keys(s.s) {
+		res = append(res, el)
+	}
+
+	return json.Marshal(res)
+}
+
+func (s set[v]) UnmarshalJSON(data []byte) error {
+	return nil
+}
+
+// fixme: add more methods from wiki https://en.wikipedia.org/wiki/Set_(abstract_data_type)

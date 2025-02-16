@@ -1,12 +1,15 @@
 package gg_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"slices"
 	"testing"
 
 	"gg"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Exampleset_Add() {
@@ -25,6 +28,8 @@ func Exampleset_Add() {
 }
 
 func TestUnion(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int]()
 	b := gg.NewSet[int]()
 
@@ -61,6 +66,8 @@ func TestUnion(t *testing.T) {
 }
 
 func TestIntersection(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int]()
 	b := gg.NewSet[int]()
 
@@ -97,6 +104,8 @@ func TestIntersection(t *testing.T) {
 }
 
 func TestDifference(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int]()
 	b := gg.NewSet[int]()
 
@@ -129,6 +138,8 @@ func TestDifference(t *testing.T) {
 }
 
 func TestSubset(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int]()
 	b := gg.NewSet[int]()
 
@@ -143,15 +154,24 @@ func TestSubset(t *testing.T) {
 }
 
 func TestEnumerate(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int](1, 2)
 
+	res := a.Enumerate()
 	expected := []int{1, 2}
-	if !reflect.DeepEqual(a.Enumerate(), expected) {
+
+	slices.Sort(expected)
+	slices.Sort(res)
+
+	if !reflect.DeepEqual(res, expected) {
 		t.Fatalf("expected enumeration:%#v, got :%#v", a.Enumerate(), expected)
 	}
 }
 
 func TestDelete(t *testing.T) {
+	t.Parallel()
+
 	a := gg.NewSet[int](1, 2, 3)
 
 	a.Delete(1, 3)
@@ -164,4 +184,55 @@ func TestDelete(t *testing.T) {
 	}
 
 	t.Fatalf("expected set to have exactly one element, instead %#v", a)
+}
+
+func TestMarshalSetOfStructs(t *testing.T) {
+	t.Parallel()
+
+	type fu struct{ Str string }
+
+	a := gg.NewSet[fu](fu{Str: "hello"}, fu{Str: "bye"})
+
+	t.Logf("set of structures: \n %#v\n", a)
+
+	b, err := json.Marshal(a)
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	t.Logf("result JSON: \n %s\n", string(b))
+
+	// why this works without sorting?
+	// the next test requires sorting to work
+	// since we are comparing slices — ordered collection
+	assert.JSONEq(t, `[{"Str":"hello"},{"Str":"bye"}]`, string(b))
+}
+
+func TestMarshalSetOfStrings(t *testing.T) {
+	t.Parallel()
+
+	a := gg.NewSet[string]("hello", "bye")
+
+	t.Logf("set of strings: \n %#v\n", a)
+
+	b, err := json.Marshal(a)
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	t.Logf("result JSON: \n %s\n", string(b))
+
+	var res []string
+
+	err = json.Unmarshal(b, &res)
+	require.NoError(t, err)
+
+	expected := []string{"hello", "bye"}
+
+	slices.Sort(expected)
+	slices.Sort(res)
+
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatal("set of strings shoudl be equal")
+	}
 }
