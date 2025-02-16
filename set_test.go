@@ -94,3 +94,49 @@ func TestIntersection(t *testing.T) {
 		t.Fatalf("expected: %#v, got %#v", expected, res)
 	}
 }
+
+func TestDifference(t *testing.T) {
+	a := gg.NewSet[int]()
+	b := gg.NewSet[int]()
+
+	a.Add(1)
+	a.Add(2)
+
+	b.Add(2)
+	b.Add(8)
+
+	u := a.Difference(b)
+
+	res := make([]int, 0)
+
+	for v := range u.All() {
+		res = append(res, v)
+	}
+
+	expected := []int{1, 8}
+
+	slices.Sort(res)
+	slices.Sort(expected)
+
+	if u.Len() != len(expected) {
+		t.Fatalf("expected %d number of elements, got %d", len(expected), len(res))
+	}
+
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("expected: %#v, got %#v", expected, res)
+	}
+}
+
+func TestSubset(t *testing.T) {
+	a := gg.NewSet[int]()
+	b := gg.NewSet[int]()
+
+	a.Add(1)
+	a.Add(2)
+
+	b.Add(2)
+
+	if !a.Subset(b) {
+		t.Fatalf("expected b to be a subset of a.  a:%#v, b:%#v", a, b)
+	}
+}

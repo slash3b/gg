@@ -68,13 +68,13 @@ func (s set[v]) Union(other set[v]) set[v] {
 func (s set[v]) Intersection(other set[v]) set[v] {
 	news := NewSet[v]()
 
-    for v := range other.All() {
-        if _, ok := s.s[v]; ok {
-            news.Add(v)
-        }
-    }
+	for v := range other.All() {
+		if _, ok := s.s[v]; ok {
+			news.Add(v)
+		}
+	}
 
-    return news
+	return news
 }
 
 func (s set[v]) Difference(other set[v]) set[v] {
