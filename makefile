@@ -1,4 +1,4 @@
-.PHONY: test, cover, fmt
+.PHONY: test, cover, fmt, install-tools
 
 test:
 	go test -race .
@@ -6,6 +6,9 @@ test:
 cover:
 	go test -race -cover -coverprofile=out.html
 	go tool cover -html=out.html
+
+install-tools:
+	go install tool
 
 fmt:
 	go tool gofumpt -w .
