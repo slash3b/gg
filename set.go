@@ -100,7 +100,7 @@ func (s set[v]) Difference(other set[v]) set[v] {
 }
 
 func (s set[v]) Subset(other set[v]) bool {
-	for k, _ := range other.All() {
+	for k := range other.All() {
 		if _, ok := s.s[k]; !ok {
 			return false
 		}
