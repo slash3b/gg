@@ -65,3 +65,21 @@ func TestDoublyLinkedList_Backward_SingleElement(t *testing.T) {
 
 	t.Logf("reversed linked list %#v", res)
 }
+
+func TestDoublyLinkedList_InsertAfter(t *testing.T) {
+	input := []int{42, 3, 0}
+
+	ddl := gg.NewDoublyLinkedList[int](input...)
+
+	if ddl.Len() != len(input) {
+		t.Fatalf("expected %d, got %d elements in dlinked list", input, ddl.Len())
+	}
+
+	ddl.InsertAfter(3, 7)
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{42, 3, 7, 0}) {
+		t.Fatalf("value 7 be after 3, got: %#v", ddl.ToSlice())
+	}
+
+	t.Logf("slice from linked list: %#v\n", ddl.ToSlice())
+}
