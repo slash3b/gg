@@ -2,9 +2,8 @@ package gg
 
 import (
 	"encoding/json"
-	"maps"
-
 	"iter"
+	"maps"
 )
 
 // set is a set implementation in golang
