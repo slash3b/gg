@@ -59,7 +59,7 @@ func (ddl doublyLinkedList[T]) validate() bool {
 }
 
 func (ddl doublyLinkedList[T]) IsPresent(el T) bool {
-    return false
+	return false
 }
 
 func (ddl doublyLinkedList[T]) InsertAfter(el, newel T) bool {
@@ -150,58 +150,57 @@ func (ddl *doublyLinkedList[T]) Append(el T) {
 }
 
 func (ddl doublyLinkedList[T]) isSigleNodeOnly() bool {
-    return ddl.first != nil && ddl.last == nil
+	return ddl.first != nil && ddl.last == nil
 }
 
-
 func (ddl doublyLinkedList[T]) Delete(el T) bool {
-    if ddl.IsEmpty() {
-        return false
-    }
+	if ddl.IsEmpty() {
+		return false
+	}
 
-    curr := ddl.first
+	curr := ddl.first
 
-    for curr != nil {
-        if curr.value != el {
-            curr = curr.next
+	for curr != nil {
+		if curr.value != el {
+			curr = curr.next
 
-            continue
-        }
+			continue
+		}
 
-        p := curr.prev
-        n := curr.next
+		p := curr.prev
+		n := curr.next
 
-        // matched with single element
-        if p == nil && n == nil {
-            ddl.first = nil
+		// matched with single element
+		if p == nil && n == nil {
+			ddl.first = nil
 
-            return true
-        }
+			return true
+		}
 
-        // matched with first element
-        if p == nil && n != nil {
-            n.prev = nil
-            ddl.first = n
+		// matched with first element
+		if p == nil && n != nil {
+			n.prev = nil
+			ddl.first = n
 
-            return true
-        }
+			return true
+		}
 
-        // matched with last element
-        if p != nil && n == nil {
-            p.next = nil
-            ddl.last = p
+		// matched with last element
+		if p != nil && n == nil {
+			p.next = nil
+			ddl.last = p
 
-            return true
-        }
+			return true
+		}
 
-        // found in the middle
-        p.next = n
-        n.prev = p
+		// found in the middle
+		p.next = n
+		n.prev = p
 
-        return true
-    }
+		return true
+	}
 
-    return false
+	return false
 }
 
 func (ddl doublyLinkedList[T]) All() iter.Seq[T] {

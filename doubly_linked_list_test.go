@@ -86,36 +86,36 @@ func TestDoublyLinkedList_InsertAfter(t *testing.T) {
 
 func TestDoublyLinkedList_Delete(t *testing.T) {
 	input := []int{42, 3, 0}
-    t.Logf("input: %#v", input)
+	t.Logf("input: %#v", input)
 
 	ddl := gg.NewDoublyLinkedList[int](input...)
 
-    t.Logf("delete result (3): %v", ddl.Delete(3))
-    t.Logf("slice state: %#v", ddl.ToSlice())
+	t.Logf("delete result (3): %v", ddl.Delete(3))
+	t.Logf("slice state: %#v", ddl.ToSlice())
 
 	if !reflect.DeepEqual(ddl.ToSlice(), []int{42, 0}) {
 		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
-    }
+	}
 
-    t.Logf("delete result(0): %v", ddl.Delete(0))
-    t.Logf("slice state: %#v", ddl.ToSlice())
+	t.Logf("delete result(0): %v", ddl.Delete(0))
+	t.Logf("slice state: %#v", ddl.ToSlice())
 	if !reflect.DeepEqual(ddl.ToSlice(), []int{42}) {
 		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
-    }
+	}
 
-    res := ddl.Delete(84)
-    t.Logf("delete result(84): %v", res)
-    t.Logf("slice state: %#v", ddl.ToSlice())
+	res := ddl.Delete(84)
+	t.Logf("delete result(84): %v", res)
+	t.Logf("slice state: %#v", ddl.ToSlice())
 	if res {
 		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
-    }
+	}
 
-    t.Logf("delete result(42): %v", ddl.Delete(42))
+	t.Logf("delete result(42): %v", ddl.Delete(42))
 
-    t.Logf("slice state: %#v", ddl.ToSlice())
+	t.Logf("slice state: %#v", ddl.ToSlice())
 
-    // attempt to delete already deleted
-    t.Logf("delete result(42): %v", ddl.Delete(42))
+	// attempt to delete already deleted
+	t.Logf("delete result(42): %v", ddl.Delete(42))
 
-    t.Logf("slice state: %#v", ddl.ToSlice())
+	t.Logf("slice state: %#v", ddl.ToSlice())
 }
