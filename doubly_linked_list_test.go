@@ -94,28 +94,38 @@ func TestDoublyLinkedList_Delete(t *testing.T) {
 	t.Logf("slice state: %#v", ddl.ToSlice())
 
 	if !reflect.DeepEqual(ddl.ToSlice(), []int{42, 0}) {
-		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
 	}
 
-	t.Logf("delete result(0): %v", ddl.Delete(0))
+	res := ddl.Delete(0)
+	t.Logf("delete result(0): %v", res)
 	t.Logf("slice state: %#v", ddl.ToSlice())
 	if !reflect.DeepEqual(ddl.ToSlice(), []int{42}) {
-		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
 	}
 
-	res := ddl.Delete(84)
+	res = ddl.Delete(84)
 	t.Logf("delete result(84): %v", res)
 	t.Logf("slice state: %#v", ddl.ToSlice())
 	if res {
-		t.Fatalf("unexpected slice state: %#v", ddl.ToSlice())
+		t.Fatal("err: unexpected success upon deleting foreign element")
 	}
 
-	t.Logf("delete result(42): %v", ddl.Delete(42))
-
+	res = ddl.Delete(42)
+	t.Logf("delete result(42): %v", res)
 	t.Logf("slice state: %#v", ddl.ToSlice())
+	if !res {
+		t.Fatalf("err: unable to delete existing element")
+	}
+	if !ddl.IsEmpty() {
+		t.Fatal("err: queue supposed to be empty")
+	}
 
+	res = ddl.Delete(42)
 	// attempt to delete already deleted
-	t.Logf("delete result(42): %v", ddl.Delete(42))
-
+	t.Logf("delete result(42): %v", res)
 	t.Logf("slice state: %#v", ddl.ToSlice())
+	if res {
+		t.Fatalf("err: unexpected successful deletion for not existing element")
+	}
 }

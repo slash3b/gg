@@ -1,6 +1,8 @@
 package gg
 
 import (
+	"fmt"
+
 	"iter"
 )
 
@@ -29,7 +31,7 @@ func NewDoublyLinkedList[T comparable](els ...T) *doublyLinkedList[T] {
 	return ddl
 }
 
-func (ddl doublyLinkedList[T]) ToSlice() []T {
+func (ddl *doublyLinkedList[T]) ToSlice() []T {
 	if ddl.IsEmpty() {
 		return nil
 	}
@@ -46,7 +48,30 @@ func (ddl doublyLinkedList[T]) ToSlice() []T {
 	return res
 }
 
-func (ddl doublyLinkedList[T]) findByValue(el T) *node[T] {
+func (ddl *doublyLinkedList[T]) Debug() {
+	println("debug------------------")
+	if ddl.IsEmpty() {
+		fmt.Println("ddl is empty")
+		return
+	}
+
+	if ddl.first != nil {
+		fmt.Println("first node", ddl.first)
+	} else {
+		fmt.Println("first node is empty")
+	}
+
+	if ddl.last != nil {
+		fmt.Println("last node", ddl.last)
+	} else {
+		fmt.Println("last node is empty")
+	}
+
+	fmt.Println("all nodes:", ddl.ToSlice())
+	println("------------------debug")
+}
+
+func (ddl *doublyLinkedList[T]) findByValue(el T) *node[T] {
 	// todo: use 2 pointers to start searching from both ends
 	// use special case for ddl.Len() == 1
 	// a bit lame but works okay for now.
@@ -54,15 +79,15 @@ func (ddl doublyLinkedList[T]) findByValue(el T) *node[T] {
 }
 
 // todo: add method to check that all next and previous connections are correct
-func (ddl doublyLinkedList[T]) validate() bool {
+func (ddl *doublyLinkedList[T]) validate() bool {
 	return true
 }
 
-func (ddl doublyLinkedList[T]) IsPresent(el T) bool {
+func (ddl *doublyLinkedList[T]) IsPresent(el T) bool {
 	return false
 }
 
-func (ddl doublyLinkedList[T]) InsertAfter(el, newel T) bool {
+func (ddl *doublyLinkedList[T]) InsertAfter(el, newel T) bool {
 	curr := ddl.first
 
 	for curr != nil {
@@ -98,17 +123,17 @@ func (ddl doublyLinkedList[T]) InsertAfter(el, newel T) bool {
 }
 
 // fixme: what to do if there are duplicates
-func (ddl doublyLinkedList[T]) InsertBefore(el, newel T) bool {
+func (ddl *doublyLinkedList[T]) InsertBefore(el, newel T) bool {
 	return true
 }
 
 // fixme: should this be empty?
 // fixme: should both be equal to the same thing?
-func (ddl doublyLinkedList[T]) IsEmpty() bool {
+func (ddl *doublyLinkedList[T]) IsEmpty() bool {
 	return ddl.first == nil && ddl.last == nil
 }
 
-func (ddl doublyLinkedList[T]) Len() int {
+func (ddl *doublyLinkedList[T]) Len() int {
 	res := 0
 
 	// fixme: track it internally
@@ -122,7 +147,7 @@ func (ddl doublyLinkedList[T]) Len() int {
 	return res
 }
 
-func (ddl doublyLinkedList[T]) Prepend(el T) {
+func (ddl *doublyLinkedList[T]) Prepend(el T) {
 	return
 }
 
@@ -149,11 +174,11 @@ func (ddl *doublyLinkedList[T]) Append(el T) {
 	ddl.last = n
 }
 
-func (ddl doublyLinkedList[T]) isSigleNodeOnly() bool {
+func (ddl *doublyLinkedList[T]) isSigleNodeOnly() bool {
 	return ddl.first != nil && ddl.last == nil
 }
 
-func (ddl doublyLinkedList[T]) Delete(el T) bool {
+func (ddl *doublyLinkedList[T]) Delete(el T) bool {
 	if ddl.IsEmpty() {
 		return false
 	}
@@ -187,13 +212,21 @@ func (ddl doublyLinkedList[T]) Delete(el T) bool {
 
 		// matched with last element
 		if p != nil && n == nil {
+
+			// special case for 2 element queue
+			if p.value == ddl.first.value {
+				ddl.first.next = nil
+				ddl.last = nil
+
+				return true
+			}
+
 			p.next = nil
 			ddl.last = p
 
 			return true
 		}
 
-		// found in the middle
 		p.next = n
 		n.prev = p
 
@@ -203,7 +236,7 @@ func (ddl doublyLinkedList[T]) Delete(el T) bool {
 	return false
 }
 
-func (ddl doublyLinkedList[T]) All() iter.Seq[T] {
+func (ddl *doublyLinkedList[T]) All() iter.Seq[T] {
 	curr := ddl.first
 
 	return func(y func(el T) bool) {
@@ -216,7 +249,7 @@ func (ddl doublyLinkedList[T]) All() iter.Seq[T] {
 	}
 }
 
-func (ddl doublyLinkedList[T]) AllReverse() iter.Seq[T] {
+func (ddl *doublyLinkedList[T]) AllReverse() iter.Seq[T] {
 	curr := ddl.last
 	if ddl.Len() == 1 {
 		curr = ddl.first
