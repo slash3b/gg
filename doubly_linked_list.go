@@ -148,7 +148,18 @@ func (ddl *doublyLinkedList[T]) Len() int {
 }
 
 func (ddl *doublyLinkedList[T]) Prepend(el T) {
-	return
+	nn := newnode(el)
+
+	if ddl.first == nil {
+		ddl.first = nn
+
+		return
+	}
+
+	nn.next = ddl.first
+	ddl.first.prev = nn
+
+	ddl.first = nn
 }
 
 func (ddl *doublyLinkedList[T]) Append(el T) {

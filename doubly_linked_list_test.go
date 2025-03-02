@@ -129,3 +129,29 @@ func TestDoublyLinkedList_Delete(t *testing.T) {
 		t.Fatalf("err: unexpected successful deletion for not existing element")
 	}
 }
+
+func TestDoublyLinkedList_Prepend(t *testing.T) {
+	input := []int{42}
+	t.Logf("input: %#v", input)
+
+	ddl := gg.NewDoublyLinkedList[int](input...)
+
+	ddl.Prepend(7)
+	ddl.Prepend(-1)
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{-1, 7, 42}) {
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+}
+
+func TestDoublyLinkedList_PrependToEmpty(t *testing.T) {
+	ddl := gg.NewDoublyLinkedList[int]()
+
+	ddl.Prepend(1)
+	ddl.Prepend(2)
+	ddl.Prepend(3)
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{3, 2, 1}) {
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+}
