@@ -72,13 +72,17 @@ func (ddl *doublyLinkedList[T]) Debug() {
 }
 
 // fixme: make private again
-func (ddl *doublyLinkedList[T]) FindByValue(el T) (*node[T], bool) {
+func (ddl *doublyLinkedList[T]) findByValue(el T) (*node[T], bool) {
 	if ddl.Isempty() {
 		return nil, false
 	}
 
-	if ddl.Len() == 1 && ddl.first.value == el {
-		return ddl.first, true
+	if ddl.Len() == 1 {
+		if ddl.first.value == el {
+			return ddl.first, true
+		}
+
+		return nil, false
 	}
 
 	f, l := ddl.first, ddl.last
@@ -96,13 +100,11 @@ func (ddl *doublyLinkedList[T]) FindByValue(el T) (*node[T], bool) {
 
 		// point to each other
 		if f.next == l {
-			println("point to each other")
 			return nil, false
 		}
 
 		// point to the same element
 		if f.next == l.prev {
-			println("point to the same element")
 			if f.next.value == el {
 				return f.next, true
 			}
@@ -110,14 +112,10 @@ func (ddl *doublyLinkedList[T]) FindByValue(el T) (*node[T], bool) {
 			return nil, false
 		}
 
-		// continue to loop
-
 		f = f.next
 		l = l.prev
 	}
-	// todo: use 2 pointers to start searching from both ends
-	// use special case for ddl.Len() == 1
-	// a bit lame but works okay for now.
+
 	return nil, false
 }
 
@@ -233,61 +231,50 @@ func (ddl *doublyLinkedList[T]) isSigleNodeOnly() bool {
 }
 
 func (ddl *doublyLinkedList[T]) Delete(el T) bool {
-	if ddl.Isempty() {
-		return false
+	node, ok := ddl.findByValue(el)
+	if !ok {
+		return ok
 	}
 
-	curr := ddl.first
+	p := node.prev
+	n := node.next
 
-	for curr != nil {
-		if curr.value != el {
-			curr = curr.next
-
-			continue
-		}
-
-		p := curr.prev
-		n := curr.next
-
-		// matched with single element
-		if p == nil && n == nil {
-			ddl.first = nil
-
-			return true
-		}
-
-		// matched with first element
-		if p == nil && n != nil {
-			n.prev = nil
-			ddl.first = n
-
-			return true
-		}
-
-		// matched with last element
-		if p != nil && n == nil {
-
-			// special case for 2 element queue
-			if p.value == ddl.first.value {
-				ddl.first.next = nil
-				ddl.last = nil
-
-				return true
-			}
-
-			p.next = nil
-			ddl.last = p
-
-			return true
-		}
-
-		p.next = n
-		n.prev = p
+	// matched with single element
+	if p == nil && n == nil {
+		ddl.first = nil
 
 		return true
 	}
 
-	return false
+	// matched with first element
+	if p == nil && n != nil {
+		n.prev = nil
+		ddl.first = n
+
+		return true
+	}
+
+	// matched with last element
+	if p != nil && n == nil {
+
+		// special case for 2 element queue
+		if p.value == ddl.first.value {
+			ddl.first.next = nil
+			ddl.last = nil
+
+			return true
+		}
+
+		p.next = nil
+		ddl.last = p
+
+		return true
+	}
+
+	p.next = n
+	n.prev = p
+
+	return true
 }
 
 func (ddl *doublyLinkedList[T]) All() iter.Seq[T] {
