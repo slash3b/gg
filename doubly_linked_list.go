@@ -19,6 +19,7 @@ func newnode[T comparable](el T) *node[T] {
 type doublyLinkedList[T comparable] struct {
 	first *node[T]
 	last  *node[T]
+	len   int
 }
 
 func NewDoublyLinkedList[T comparable](els ...T) *doublyLinkedList[T] {
@@ -28,6 +29,8 @@ func NewDoublyLinkedList[T comparable](els ...T) *doublyLinkedList[T] {
 		ddl.Append(e)
 	}
 
+	ddl.len = len(els)
+
 	return ddl
 }
 
@@ -36,7 +39,7 @@ func (ddl *doublyLinkedList[T]) ToSlice() []T {
 		return nil
 	}
 
-	res := make([]T, 0, ddl.Len())
+	res := make([]T, 0, ddl.len)
 
 	curr := ddl.first
 	for curr != nil {
@@ -77,7 +80,7 @@ func (ddl *doublyLinkedList[T]) findByValue(el T) (*node[T], bool) {
 		return nil, false
 	}
 
-	if ddl.Len() == 1 {
+	if ddl.len == 1 {
 		if ddl.first.value == el {
 			return ddl.first, true
 		}
@@ -129,38 +132,34 @@ func (ddl *doublyLinkedList[T]) IsPresent(el T) bool {
 }
 
 func (ddl *doublyLinkedList[T]) InsertAfter(el, newel T) bool {
-	curr := ddl.first
-
-	for curr != nil {
-
-		if curr.value == el {
-
-			// meaning curr is the last element
-			if curr.next == nil {
-				ddl.Append(newel)
-
-				return true
-			}
-
-			nn := newnode(newel)
-			cn := curr.next
-
-			// bind current to new node
-			curr.next = nn
-
-			// bind new node with both prev and next nodes
-			nn.prev = curr
-			nn.next = cn
-
-			cn.prev = nn
-
-			return true
-		}
-
-		curr = curr.next
+	node, ok := ddl.findByValue(el)
+	if !ok {
+		return false
 	}
 
-	return false
+	nn := newnode(newel)
+	ddl.len++
+
+	// meaning curr is the last element
+	if node.next == nil {
+		ddl.Append(newel)
+
+		return true
+	}
+
+	p := node.next
+
+	// bind current to new node
+	node.next = nn
+
+	// bind new node with both prev and next nodes
+	nn.prev = node
+	nn.next = p
+
+	// bind prev node back to new node
+	p.prev = nn
+
+	return true
 }
 
 // fixme: what to do if there are duplicates
@@ -175,17 +174,7 @@ func (ddl *doublyLinkedList[T]) Isempty() bool {
 }
 
 func (ddl *doublyLinkedList[T]) Len() int {
-	res := 0
-
-	// fixme: track it internally
-
-	curr := ddl.first
-	for curr != nil {
-		res++
-		curr = curr.next
-	}
-
-	return res
+	return ddl.len
 }
 
 func (ddl *doublyLinkedList[T]) Prepend(el T) {
@@ -226,15 +215,13 @@ func (ddl *doublyLinkedList[T]) Append(el T) {
 	ddl.last = n
 }
 
-func (ddl *doublyLinkedList[T]) isSigleNodeOnly() bool {
-	return ddl.first != nil && ddl.last == nil
-}
-
 func (ddl *doublyLinkedList[T]) Delete(el T) bool {
 	node, ok := ddl.findByValue(el)
 	if !ok {
 		return ok
 	}
+
+	ddl.len--
 
 	p := node.prev
 	n := node.next
