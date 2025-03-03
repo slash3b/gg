@@ -117,7 +117,7 @@ func TestDoublyLinkedList_Delete(t *testing.T) {
 	if !res {
 		t.Fatalf("err: unable to delete existing element")
 	}
-	if !ddl.IsEmpty() {
+	if !ddl.Isempty() {
 		t.Fatal("err: queue supposed to be empty")
 	}
 
@@ -153,5 +153,59 @@ func TestDoublyLinkedList_PrependToEmpty(t *testing.T) {
 
 	if !reflect.DeepEqual(ddl.ToSlice(), []int{3, 2, 1}) {
 		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+}
+
+func TestDoublyLinkedList_FindByValue(t *testing.T) {
+	input := []int{42, 3, 4, 1, 8}
+	t.Logf("input: %#v", input)
+
+	ddl := gg.NewDoublyLinkedList[int](input...)
+
+	_, ok := ddl.FindByValue(3)
+
+	if !ok {
+		t.Fatalf("could not find 3")
+	}
+
+	_, ok = ddl.FindByValue(42)
+
+	if !ok {
+		t.Fatalf("could not find 42")
+	}
+
+	_, ok = ddl.FindByValue(4)
+
+	if !ok {
+		t.Fatalf("could not find 4")
+	}
+
+	_, ok = ddl.FindByValue(10)
+
+	if ok {
+		t.Fatalf("unexpected success")
+	}
+	// --
+
+	ddl = gg.NewDoublyLinkedList[int]()
+
+	_, ok = ddl.FindByValue(3)
+	if ok {
+		t.Fatalf("unexpected success")
+	}
+
+	input = []int{42, 3, 1, 8}
+	t.Logf("input: %#v", input)
+
+	ddl = gg.NewDoublyLinkedList[int](input...)
+
+	_, ok = ddl.FindByValue(3)
+	if !ok {
+		t.Fatalf("should not have failed")
+	}
+
+	_, ok = ddl.FindByValue(-1)
+	if ok {
+		t.Fatalf("should have failed")
 	}
 }

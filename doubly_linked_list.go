@@ -32,7 +32,7 @@ func NewDoublyLinkedList[T comparable](els ...T) *doublyLinkedList[T] {
 }
 
 func (ddl *doublyLinkedList[T]) ToSlice() []T {
-	if ddl.IsEmpty() {
+	if ddl.Isempty() {
 		return nil
 	}
 
@@ -50,7 +50,7 @@ func (ddl *doublyLinkedList[T]) ToSlice() []T {
 
 func (ddl *doublyLinkedList[T]) Debug() {
 	println("debug------------------")
-	if ddl.IsEmpty() {
+	if ddl.Isempty() {
 		fmt.Println("ddl is empty")
 		return
 	}
@@ -71,11 +71,54 @@ func (ddl *doublyLinkedList[T]) Debug() {
 	println("------------------debug")
 }
 
-func (ddl *doublyLinkedList[T]) findByValue(el T) *node[T] {
+// fixme: make private again
+func (ddl *doublyLinkedList[T]) FindByValue(el T) (*node[T], bool) {
+	if ddl.Isempty() {
+		return nil, false
+	}
+
+	if ddl.Len() == 1 && ddl.first.value == el {
+		return ddl.first, true
+	}
+
+	f, l := ddl.first, ddl.last
+	for {
+		// check if values are present
+		if f.value == el {
+			return f, true
+		}
+
+		if l.value == el {
+			return l, true
+		}
+
+		// check if we need to stop
+
+		// point to each other
+		if f.next == l {
+			println("point to each other")
+			return nil, false
+		}
+
+		// point to the same element
+		if f.next == l.prev {
+			println("point to the same element")
+			if f.next.value == el {
+				return f.next, true
+			}
+
+			return nil, false
+		}
+
+		// continue to loop
+
+		f = f.next
+		l = l.prev
+	}
 	// todo: use 2 pointers to start searching from both ends
 	// use special case for ddl.Len() == 1
 	// a bit lame but works okay for now.
-	return nil
+	return nil, false
 }
 
 // todo: add method to check that all next and previous connections are correct
@@ -129,7 +172,7 @@ func (ddl *doublyLinkedList[T]) InsertBefore(el, newel T) bool {
 
 // fixme: should this be empty?
 // fixme: should both be equal to the same thing?
-func (ddl *doublyLinkedList[T]) IsEmpty() bool {
+func (ddl *doublyLinkedList[T]) Isempty() bool {
 	return ddl.first == nil && ddl.last == nil
 }
 
@@ -165,7 +208,7 @@ func (ddl *doublyLinkedList[T]) Prepend(el T) {
 func (ddl *doublyLinkedList[T]) Append(el T) {
 	n := &node[T]{value: el}
 
-	if ddl.IsEmpty() {
+	if ddl.Isempty() {
 		ddl.first = n
 
 		return
@@ -190,7 +233,7 @@ func (ddl *doublyLinkedList[T]) isSigleNodeOnly() bool {
 }
 
 func (ddl *doublyLinkedList[T]) Delete(el T) bool {
-	if ddl.IsEmpty() {
+	if ddl.Isempty() {
 		return false
 	}
 
