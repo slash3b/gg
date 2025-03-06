@@ -155,3 +155,53 @@ func TestDoublyLinkedList_PrependToEmpty(t *testing.T) {
 		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
 	}
 }
+
+func TestDoublyLinkedList_InsertBefore(t *testing.T) {
+	input := []int{3, 2, 1}
+	ddl := gg.NewDoublyLinkedList[int](input...)
+
+	ok := ddl.InsertBefore(2, 5)
+
+	if !ok {
+		t.Fatalf("insert 5 before 2 should have been a success")
+	}
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{3, 5, 2, 1}) {
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+
+	t.Logf("ddl is: %#v", ddl.ToSlice())
+
+	// try not existing
+
+	ok = ddl.InsertBefore(7, 5)
+
+	if ok {
+		t.Fatalf("insert 5 before 2 should have been a success")
+	}
+
+	ok = ddl.InsertBefore(3, 8)
+
+	if !ok {
+		t.Fatalf("insert 5 before 3 should have been a success")
+	}
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{8, 3, 5, 2, 1}) {
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+
+	t.Logf("ddl is: %#v", ddl.ToSlice())
+
+	// last
+	ok = ddl.InsertBefore(1, 42)
+
+	if !ok {
+		t.Fatalf("insert 42 before 1 should have been a success")
+	}
+
+	if !reflect.DeepEqual(ddl.ToSlice(), []int{8, 3, 5, 2, 42, 1}) {
+		t.Fatalf("err: unexpected slice state: %#v", ddl.ToSlice())
+	}
+
+	t.Logf("ddl is: %#v", ddl.ToSlice())
+}

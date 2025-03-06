@@ -1,8 +1,6 @@
 package gg
 
 import (
-	"fmt"
-
 	"iter"
 )
 
@@ -51,30 +49,6 @@ func (ddl *doublyLinkedList[T]) ToSlice() []T {
 	return res
 }
 
-func (ddl *doublyLinkedList[T]) Debug() {
-	println("debug------------------")
-	if ddl.Isempty() {
-		fmt.Println("ddl is empty")
-		return
-	}
-
-	if ddl.first != nil {
-		fmt.Println("first node", ddl.first)
-	} else {
-		fmt.Println("first node is empty")
-	}
-
-	if ddl.last != nil {
-		fmt.Println("last node", ddl.last)
-	} else {
-		fmt.Println("last node is empty")
-	}
-
-	fmt.Println("all nodes:", ddl.ToSlice())
-	println("------------------debug")
-}
-
-// fixme: make private again
 func (ddl *doublyLinkedList[T]) findByValue(el T) (*node[T], bool) {
 	if ddl.Isempty() {
 		return nil, false
@@ -90,7 +64,8 @@ func (ddl *doublyLinkedList[T]) findByValue(el T) (*node[T], bool) {
 
 	f, l := ddl.first, ddl.last
 	for {
-		// check if values are present
+		// check if value is present
+
 		if f.value == el {
 			return f, true
 		}
@@ -124,11 +99,14 @@ func (ddl *doublyLinkedList[T]) findByValue(el T) (*node[T], bool) {
 
 // todo: add method to check that all next and previous connections are correct
 func (ddl *doublyLinkedList[T]) validate() bool {
+	// should I validate?
 	return true
 }
 
 func (ddl *doublyLinkedList[T]) IsPresent(el T) bool {
-	return false
+	_, ok := ddl.findByValue(el)
+
+	return ok
 }
 
 func (ddl *doublyLinkedList[T]) InsertAfter(el, newel T) bool {
@@ -162,13 +140,50 @@ func (ddl *doublyLinkedList[T]) InsertAfter(el, newel T) bool {
 	return true
 }
 
-// fixme: what to do if there are duplicates
 func (ddl *doublyLinkedList[T]) InsertBefore(el, newel T) bool {
+	// check if empty
+	node, ok := ddl.findByValue(el)
+	if !ok {
+		return false
+	}
+
+	nn := newnode(newel)
+	ddl.len++
+
+	// if first
+	if ddl.first == node {
+		f := ddl.first
+		f.prev = nn
+
+		ddl.first = nn
+		nn.next = f
+
+		return true
+	}
+
+	// if last
+	if ddl.last == node {
+		l := ddl.last
+
+		// tie second to last node
+		l.prev.next = nn
+		nn.prev = l.prev
+
+		nn.next = l
+		l.prev = nn
+
+		return true
+	}
+
+	node.prev.next = nn
+	nn.prev = node.prev
+
+	node.prev = nn
+	nn.next = node
+
 	return true
 }
 
-// fixme: should this be empty?
-// fixme: should both be equal to the same thing?
 func (ddl *doublyLinkedList[T]) Isempty() bool {
 	return ddl.first == nil && ddl.last == nil
 }
@@ -193,7 +208,7 @@ func (ddl *doublyLinkedList[T]) Prepend(el T) {
 }
 
 func (ddl *doublyLinkedList[T]) Append(el T) {
-	n := &node[T]{value: el}
+	n := newnode(el)
 
 	if ddl.Isempty() {
 		ddl.first = n
